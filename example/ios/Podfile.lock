@@ -1,0 +1,31 @@
+PODS:
+  - Flutter (1.0.0)
+  - flutterimagetexture (0.0.1):
+    - Flutter
+    - SDWebImage (~> 5.0)
+  - SDWebImage (5.9.5):
+    - SDWebImage/Core (= 5.9.5)
+  - SDWebImage/Core (5.9.5)
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - flutterimagetexture (from `.symlinks/plugins/flutterimagetexture/ios`)
+
+SPEC REPOS:
+  trunk:
+    - SDWebImage
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  flutterimagetexture:
+    :path: ".symlinks/plugins/flutterimagetexture/ios"
+
+SPEC CHECKSUMS:
+  Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+  flutterimagetexture: 8b4b95581a8d55af3b7a49e40cda809ac978d2a0
+  SDWebImage: 0b2ba0d56479bf6a45ecddbfd5558bea93150d25
+
+PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c
+
+COCOAPODS: 1.8.4
