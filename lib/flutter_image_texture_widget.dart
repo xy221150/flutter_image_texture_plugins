@@ -42,7 +42,9 @@ class _FlutterImageTextureWidgetState extends State<FlutterImageTextureWidget> {
   @override
   Widget build(BuildContext context) {
     if(textureId == null){
-      return Container();
+      return Container(
+        color: Colors.white,
+      );
     }
     return Container(
       width: widget.width.toDouble(),
