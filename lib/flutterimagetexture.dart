@@ -13,7 +13,7 @@ class Flutterimagetexture {
   }
 
 
-  static Future<int> loadImg(String url,int width,int height) async {
+  static Future<int> loadImg(String url,double width,double height) async {
     final args = <String, dynamic>{"url":url,"height":height,"width":width};
     return await _channel.invokeMethod("load", args);
   }

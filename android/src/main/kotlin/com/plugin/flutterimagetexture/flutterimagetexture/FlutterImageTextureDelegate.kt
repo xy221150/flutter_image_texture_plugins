@@ -22,8 +22,8 @@ class FlutterImageTextureDelegate(messenger: BinaryMessenger, handler: MethodCha
 
     fun loadImage(textures:TextureRegistry?,call:MethodCall,result:MethodChannel.Result){
         val entry = textures?.createSurfaceTexture()
-        val width = call.argument<Int>("width")!!
-        val height = call.argument<Int>("height")!!
+        val width = call.argument<Float>("width")!!
+        val height = call.argument<Float>("height")!!
         val url = call.argument<String>("url")
         fluttetrImageHashMap[entry?.id().toString()] = FlutterImageTexture(context, url, width, height, entry)
         result.success(entry?.id())

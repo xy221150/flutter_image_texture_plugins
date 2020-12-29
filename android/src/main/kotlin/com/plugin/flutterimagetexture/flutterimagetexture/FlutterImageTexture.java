@@ -1,10 +1,13 @@
 package com.plugin.flutterimagetexture.flutterimagetexture;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.util.DisplayMetrics;
 import android.view.Surface;
 
 import androidx.annotation.NonNull;
@@ -19,31 +22,27 @@ import io.flutter.view.TextureRegistry;
 public class FlutterImageTexture {
     Context context;
     String url;
-    int width;
-    int height;
+    float width;
+    float height;
     TextureRegistry.SurfaceTextureEntry mEntry;
     Surface surface;
-    public FlutterImageTexture(Context context, String url, int width, int height, TextureRegistry.SurfaceTextureEntry entry) {
+    public FlutterImageTexture(Context context, String url, float width, float height, TextureRegistry.SurfaceTextureEntry entry) {
         this.context = context;
         this.url = url;
         this.width = width;
         this.height = height;
         this.mEntry = entry;
         this.surface = new Surface(entry.surfaceTexture());
-        loadImage( context,url,width,height);
+        loadImage(context,url,width,height);
     }
 
 
     private void draw(Bitmap bitmap){
         if(surface!=null&&surface.isValid()){
-            mEntry.surfaceTexture().setDefaultBufferSize(width,height);
+            mEntry.surfaceTexture().setDefaultBufferSize(dip2px(context,width),dip2px(context,height));
             Canvas canvas = surface.lockCanvas(null);
-            canvas.drawBitmap( bitmap,0.0f, 0.0f, new Paint(3));
+            canvas.drawBitmap(bitmap,0,0,new Paint());
             surface.unlockCanvasAndPost(canvas);
-            if (bitmap != null && !bitmap.isRecycled())
-            {
-                bitmap=null;
-            }
         }
     }
     public void dispose(){
@@ -52,9 +51,8 @@ public class FlutterImageTexture {
         mEntry.release();
     }
 
-    public void loadImage(Context context, String url, final int width, int height) {
-
-        Glide.with(context).asBitmap().load(url).override(width,height).into(new CustomTarget<Bitmap>() {
+    private void loadImage(Context context, String url, final float width,final float height) {
+        Glide.with(context).asBitmap().load(url).override(dip2px(context,width),dip2px(context,height)).into(new CustomTarget<Bitmap>() {
             @Override
             public void onLoadFailed(@Nullable Drawable errorDrawable) {
                 super.onLoadFailed(errorDrawable);
@@ -72,5 +70,10 @@ public class FlutterImageTexture {
         });
     }
 
+
+    public static int dip2px(Context context, float dpValue) {
+        float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dpValue * scale + 0.5f);
+    }
 
 }

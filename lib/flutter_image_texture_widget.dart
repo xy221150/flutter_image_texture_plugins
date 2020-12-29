@@ -9,9 +9,9 @@ class FlutterImageTextureWidget extends StatefulWidget {
 
   final String url;
 
-  final int width;
+  final double width;
 
-  final int height;
+  final double height;
 
   const FlutterImageTextureWidget({Key key, this.url, this.width, this.height}) : super(key: key);
 
@@ -32,12 +32,19 @@ class _FlutterImageTextureWidgetState extends State<FlutterImageTextureWidget> {
     loadImage();
   }
 
-
   Future loadImage() async{
     textureId = await Flutterimagetexture.loadImg(widget.url,widget.width,widget.height);
     if(mounted)setState(() {});
   }
 
+  @override
+  void didUpdateWidget(covariant FlutterImageTextureWidget oldWidget) {
+    // TODO: implement didUpdateWidget
+    super.didUpdateWidget(oldWidget);
+    if(oldWidget.url!=widget.url){
+      loadImage();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,9 +54,9 @@ class _FlutterImageTextureWidgetState extends State<FlutterImageTextureWidget> {
       );
     }
     return Container(
-      width: widget.width.toDouble(),
-      height: widget.height.toDouble(),
-      child: Texture(textureId: textureId)
+      width: widget.width,
+      height: widget.height,
+      child:Texture(textureId: textureId),
     );
   }
 
