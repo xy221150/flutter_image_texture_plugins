@@ -22,9 +22,7 @@ class FlutterImageTextureWidget extends StatefulWidget {
 class _FlutterImageTextureWidgetState extends State<FlutterImageTextureWidget> {
 
   int textureId;
-
-
-  EventChannel eventChannel;
+  
   @override
   void initState() {
     // TODO: implement initState

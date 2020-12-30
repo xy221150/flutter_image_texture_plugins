@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Surface;
 
 import androidx.annotation.NonNull;
@@ -17,6 +18,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 
+import io.flutter.plugin.common.MethodChannel;
 import io.flutter.view.TextureRegistry;
 
 public class FlutterImageTexture {
@@ -26,13 +28,16 @@ public class FlutterImageTexture {
     float height;
     TextureRegistry.SurfaceTextureEntry mEntry;
     Surface surface;
-    public FlutterImageTexture(Context context, String url, float width, float height, TextureRegistry.SurfaceTextureEntry entry) {
+    MethodChannel.Result result;
+//    Bitmap bitmap;
+    public FlutterImageTexture(Context context, String url, float width, float height, TextureRegistry.SurfaceTextureEntry entry, MethodChannel.Result result) {
         this.context = context;
         this.url = url;
         this.width = width;
         this.height = height;
         this.mEntry = entry;
         this.surface = new Surface(entry.surfaceTexture());
+        this.result = result;
         loadImage(context,url,width,height);
     }
 
@@ -43,12 +48,21 @@ public class FlutterImageTexture {
             Canvas canvas = surface.lockCanvas(null);
             canvas.drawBitmap(bitmap,0,0,new Paint());
             surface.unlockCanvasAndPost(canvas);
+            Log.d("FlutterImageTexture","entry_id========="+mEntry.id());
+            result.success(mEntry.id());
         }
     }
     public void dispose(){
         surface.release();
         surface = null;
         mEntry.release();
+        mEntry = null;
+        result = null;
+        context = null;
+//        if(bitmap != null && !bitmap.isRecycled()){
+//            bitmap.recycle();
+//            bitmap = null;
+//        }
     }
 
     private void loadImage(Context context, String url, final float width,final float height) {
@@ -59,8 +73,9 @@ public class FlutterImageTexture {
             }
 
             @Override
-            public void onResourceReady(@NonNull Bitmap bitmap, @Nullable Transition<? super Bitmap> transition) {
-                draw(bitmap);
+            public void onResourceReady(@NonNull Bitmap b, @Nullable Transition<? super Bitmap> transition) {
+//                bitmap = b;
+                draw(b);
             }
 
             @Override
