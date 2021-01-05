@@ -15,10 +15,7 @@ NSMutableDictionary<NSNumber *, DuiaflutterextexturePresenter *> *renders;
 }
 
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result{
-    if([call.method  isEqual: @"getPlatformVersion"]){
-        NSString *version = [NSString stringWithFormat: @"%@%@", @"ios", UIDevice.currentDevice.systemVersion];
-        result(version);
-    }else if([call.method isEqualToString:@"load"]){
+    if([call.method isEqualToString:@"load"]){
         NSString *imageStr = call.arguments[@"url"];
         Boolean asGif = [call.arguments[@"asGif"] boolValue];
         CGFloat width = [call.arguments[@"width"] floatValue]*[UIScreen mainScreen].scale;
