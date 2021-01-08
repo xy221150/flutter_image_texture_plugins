@@ -10,16 +10,11 @@ import io.flutter.view.TextureRegistry
 import java.util.HashMap
 
 @SuppressLint("LongLogTag")
-class FlutterImageTextureDelegate(messenger: BinaryMessenger, handler: MethodChannel.MethodCallHandler, context: Context){
-    internal var methodChannel : MethodChannel? = null
-    internal val METHOD_NAME = "ImageTexture"
+class FlutterImageTextureDelegate(context: Context){
     internal var context:Context? = null
     private val fluttetrImageHashMap = HashMap<String, FlutterImageTexture>()
     init {
         this.context = context;
-        methodChannel = MethodChannel(messenger,METHOD_NAME)
-        methodChannel?.setMethodCallHandler(handler)
-
     }
 
     fun loadImage(textures:TextureRegistry?, call:MethodCall, result:MethodChannel.Result){
@@ -40,9 +35,6 @@ class FlutterImageTextureDelegate(messenger: BinaryMessenger, handler: MethodCha
     }
 
     fun dispose(){
-        if(methodChannel != null){
-            methodChannel = null
-        }
         context = null
     }
 }

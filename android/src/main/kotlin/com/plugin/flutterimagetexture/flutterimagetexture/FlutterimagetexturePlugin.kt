@@ -23,7 +23,7 @@ class FlutterimagetexturePlugin: FlutterPlugin, MethodCallHandler {
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     channel = MethodChannel(flutterPluginBinding.binaryMessenger, "FlutterImageTexture")
     textures = flutterPluginBinding.textureRegistry
-    flutterImageTextureDelegate = FlutterImageTextureDelegate(flutterPluginBinding.binaryMessenger,this,flutterPluginBinding.applicationContext)
+    flutterImageTextureDelegate = FlutterImageTextureDelegate(flutterPluginBinding.applicationContext)
     channel.setMethodCallHandler(this)
   }
 

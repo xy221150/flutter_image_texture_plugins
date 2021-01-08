@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'flutterimagetexture.dart';
+import 'flutter_image_texture.dart';
 
 class FlutterImageTextureWidget extends StatefulWidget {
 
@@ -19,7 +19,7 @@ class FlutterImageTextureWidget extends StatefulWidget {
   _FlutterImageTextureWidgetState createState() => _FlutterImageTextureWidgetState();
 }
 
-class _FlutterImageTextureWidgetState extends State<FlutterImageTextureWidget> {
+class _FlutterImageTextureWidgetState extends State<FlutterImageTextureWidget>{
 
   int textureId;
   
@@ -31,7 +31,8 @@ class _FlutterImageTextureWidgetState extends State<FlutterImageTextureWidget> {
   }
 
   Future loadImage() async{
-    textureId = await Flutterimagetexture.loadImg(widget.url,widget.width,widget.height);
+    textureId = await FlutterImageTexture.loadImg(widget.url,widget.width,widget.height);
+    print("hashCode----------$hashCode");
     if(mounted)setState(() {});
   }
 
@@ -46,6 +47,7 @@ class _FlutterImageTextureWidgetState extends State<FlutterImageTextureWidget> {
 
   @override
   Widget build(BuildContext context) {
+    
     if(textureId == null){
       return Container(
         color: Colors.white,
@@ -62,7 +64,7 @@ class _FlutterImageTextureWidgetState extends State<FlutterImageTextureWidget> {
   void dispose() {
     // TODO: implement dispose
     if(textureId!=null){
-      Flutterimagetexture.release(textureId?.toString());
+      FlutterImageTexture.release(textureId?.toString());
     }
     super.dispose();
   }

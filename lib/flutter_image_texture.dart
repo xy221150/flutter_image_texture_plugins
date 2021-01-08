@@ -3,7 +3,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 
-class Flutterimagetexture {
+class FlutterImageTexture {
   static const MethodChannel _channel =
       const MethodChannel('FlutterImageTexture');
 

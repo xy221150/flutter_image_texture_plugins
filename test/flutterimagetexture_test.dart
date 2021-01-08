@@ -1,6 +1,5 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutterimagetexture/flutterimagetexture.dart';
 
 void main() {
   const MethodChannel channel = MethodChannel('flutterimagetexture');
@@ -18,6 +17,6 @@ void main() {
   });
 
   test('getPlatformVersion', () async {
-    expect(await Flutterimagetexture.platformVersion, '42');
+//    expect(await FlutterImageTexture.loadImg("", width, height));
   });
 }
