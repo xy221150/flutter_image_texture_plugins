@@ -1,9 +1,11 @@
 package com.plugin.flutterimagetexture.flutterimagetexture
 
-import android.R.attr
+import android.R.attr.scaleHeight
+import android.R.attr.scaleWidth
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.drawable.Drawable
 import android.os.Build
@@ -17,8 +19,6 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.view.TextureRegistry.SurfaceTextureEntry
-import org.json.JSONException
-import org.json.JSONObject
 import java.io.File
 
 
@@ -30,6 +30,7 @@ class FlutterImageTexture(var context: Context?, var url: String?, var width: Fl
     var imgWidth: Int? = null
     var imgHeight: Int? = null
     val handler = Handler(Looper.getMainLooper())
+    var bitmap:Bitmap? = null
     private fun draw(bitmap: Bitmap) {
         if (surface != null && surface!!.isValid) {
             mEntry!!.surfaceTexture().setDefaultBufferSize(imgWidth!!, imgHeight!!)
@@ -48,10 +49,10 @@ class FlutterImageTexture(var context: Context?, var url: String?, var width: Fl
         mEntry = null
         result = null
         context = null
-        //        if(bitmap != null && !bitmap.isRecycled()){
-//            bitmap.recycle();
-//            bitmap = null;
-//        }
+        if(bitmap != null && !bitmap!!.isRecycled()){
+            bitmap!!.recycle();
+            bitmap = null;
+        }
     }
 
     private fun loadImage(context: Context?, url: String) {
@@ -61,12 +62,16 @@ class FlutterImageTexture(var context: Context?, var url: String?, var width: Fl
             }
 
             override fun onResourceReady(resource: File, transition: Transition<in File>?) {
+               //图片优化
                 val options = BitmapFactory.Options()
                 options.inJustDecodeBounds = true
                 options.inPreferredConfig= Bitmap.Config.RGB_565
                 BitmapFactory.decodeFile(resource.absolutePath, options)
                 val outHeight = options.outHeight
                 val outWidth = options.outWidth
+                BitmapFactory.decodeFile(resource.absolutePath, options)
+
+                //当没传默认宽高时使用图片本身宽高
                 if(width == null)
                     imgWidth = outWidth
                 else
@@ -75,14 +80,19 @@ class FlutterImageTexture(var context: Context?, var url: String?, var width: Fl
                     imgHeight = outHeight
                 else
                     imgHeight =  dip2px(context, height)
-                BitmapFactory.decodeFile(resource.absolutePath, options)
-                val inSampleSize = (outWidth/imgWidth!!)/(outHeight/imgHeight!!)
-                options.inSampleSize = inSampleSize
-                options.inJustDecodeBounds =false;
-                val bitmap = BitmapFactory.decodeFile(resource.absolutePath, options)
+
+                options.inSampleSize = calculateInSampleSize(outWidth,outHeight,imgWidth!!,imgHeight!! )
+                options.inJustDecodeBounds =false
+
+                val bm = BitmapFactory.decodeFile(resource.absolutePath, options)
+                //缩放bitmap
+                val matrix = Matrix()
+                matrix.postScale((imgWidth!!.toFloat()/bm.width), (imgHeight!!.toFloat()/bm.height))
+                bitmap = Bitmap.createBitmap(bm, 0, 0, bm.width, bm.height, matrix, true)
+                //主线程内执行
                 handler.post(object :Runnable{
                     override fun run() {
-                        draw(bitmap)
+                        draw(bitmap!!)
                     }
                 })
             }
