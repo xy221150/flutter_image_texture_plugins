@@ -15,6 +15,7 @@ import android.util.Log
 import android.view.Surface
 import androidx.annotation.RequiresApi
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import io.flutter.plugin.common.MethodChannel
@@ -23,13 +24,13 @@ import java.io.File
 
 
 @RequiresApi(Build.VERSION_CODES.KITKAT)
-class FlutterImageTexture(var context: Context?, var url: String?, var width: Float?, var height: Float?, entry: SurfaceTextureEntry, result: MethodChannel.Result?) {
+class FlutterImageTexture(var context: Context?, var url: String?, var width: Float, var height: Float, entry: SurfaceTextureEntry, result: MethodChannel.Result?) {
     var mEntry: SurfaceTextureEntry?
     var surface: Surface?
     var result: MethodChannel.Result?
     var imgWidth: Int? = null
     var imgHeight: Int? = null
-    val handler = Handler(Looper.getMainLooper())
+    var handler : Handler? = Handler(Looper.getMainLooper())
     var bitmap:Bitmap? = null
     private fun draw(bitmap: Bitmap) {
         if (surface != null && surface!!.isValid) {
@@ -48,6 +49,7 @@ class FlutterImageTexture(var context: Context?, var url: String?, var width: Fl
         mEntry!!.release()
         mEntry = null
         result = null
+        handler = null
         context = null
         if(bitmap != null && !bitmap!!.isRecycled()){
             bitmap!!.recycle();
@@ -72,25 +74,37 @@ class FlutterImageTexture(var context: Context?, var url: String?, var width: Fl
                 BitmapFactory.decodeFile(resource.absolutePath, options)
 
                 //当没传默认宽高时使用图片本身宽高
-                if(width == null)
+                if(width <= 0)
                     imgWidth = outWidth
                 else
-                    imgWidth = dip2px(context, width)
-                if(height == null)
+                    imgWidth = dp2px(context, width)
+                if(height <= 0)
                     imgHeight = outHeight
                 else
-                    imgHeight =  dip2px(context, height)
+                    imgHeight =  dp2px(context, height)
 
                 options.inSampleSize = calculateInSampleSize(outWidth,outHeight,imgWidth!!,imgHeight!! )
                 options.inJustDecodeBounds =false
 
                 val bm = BitmapFactory.decodeFile(resource.absolutePath, options)
+
+
+                //因为图片大小改变重新获取一遍宽高
+                if(width <= 0)
+                    imgWidth = bm.width
+                else
+                    imgWidth = dp2px(context, width)
+                if(height <= 0)
+                    imgHeight = bm.height
+                else
+                    imgHeight =  dp2px(context, height)
+
                 //缩放bitmap
                 val matrix = Matrix()
                 matrix.postScale((imgWidth!!.toFloat()/bm.width), (imgHeight!!.toFloat()/bm.height))
                 bitmap = Bitmap.createBitmap(bm, 0, 0, bm.width, bm.height, matrix, true)
                 //主线程内执行
-                handler.post(object :Runnable{
+                handler?.post(object :Runnable{
                     override fun run() {
                         draw(bitmap!!)
                     }
@@ -102,7 +116,7 @@ class FlutterImageTexture(var context: Context?, var url: String?, var width: Fl
     }
 
     companion object {
-        fun dip2px(context: Context?, dpValue: Float?): Int {
+        fun dp2px(context: Context?, dpValue: Float?): Int {
             val scale = context!!.resources.displayMetrics.density
             if (dpValue != null) {
                 return (dpValue * scale + 0.5f).toInt()

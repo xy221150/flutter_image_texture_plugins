@@ -8,7 +8,7 @@ class FlutterImageTexture {
       const MethodChannel('FlutterImageTexture');
 
   static Future<int> loadImg(String url,double width,double height) async {
-    final args = <String, dynamic>{"url":url,"height":height,"width":width};
+    final args = <String, dynamic>{"url":url,"height":height??0,"width":width??0};
     return await _channel.invokeMethod("load", args);
   }
 

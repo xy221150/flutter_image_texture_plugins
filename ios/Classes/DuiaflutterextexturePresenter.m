@@ -124,18 +124,20 @@ BOOL CGImageRefContainsAlpha(CGImageRef imageRef) {
     CGFloat frameWidth = size.width;
     CGFloat frameHeight = size.height;
     
-    //兼容外部 不传大小
-    if (frameWidth<=0 || frameHeight<=0) {
-        if (img!=nil) {
+    if(img!=nil){
+        if(frameWidth<=0){
+            frameWidth = CGImageGetWidth(image);
+        }
+        if(frameHeight<=0){
+            frameHeight = CGImageGetHeight(image);
+        }
+        if (!self.useExSize){
             frameWidth = CGImageGetWidth(image);
             frameHeight = CGImageGetHeight(image);
-        }else{
-            frameWidth  = 1;
-            frameHeight  = 1;
         }
-    }else if (!self.useExSize && img!=nil) {//使用图片大小
-        frameWidth = CGImageGetWidth(image);
-        frameHeight = CGImageGetHeight(image);
+    }else if(frameWidth<=0 || frameHeight<=0){
+        frameWidth  = 1;
+        frameHeight  = 1;
     }
     
     

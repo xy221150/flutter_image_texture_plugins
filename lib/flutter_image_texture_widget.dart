@@ -1,5 +1,7 @@
 
-
+import 'dart:async';
+import 'dart:io';
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -22,6 +24,10 @@ class FlutterImageTextureWidget extends StatefulWidget {
 class _FlutterImageTextureWidgetState extends State<FlutterImageTextureWidget>{
 
   int textureId;
+
+  double width;
+
+  double height;
   
   @override
   void initState() {
@@ -31,9 +37,36 @@ class _FlutterImageTextureWidgetState extends State<FlutterImageTextureWidget>{
   }
 
   Future loadImage() async{
-    textureId = await FlutterImageTexture.loadImg(widget.url,widget.width,widget.height);
+    ui.Image info = await getImageInfo(widget.url);
+    width = widget.width??px2dp(info.width);
+    height = widget.height??px2dp(info.height);
+
+    textureId = await FlutterImageTexture.loadImg(widget.url,width,height);
     print("hashCode----------$hashCode");
     if(mounted)setState(() {});
+  }
+
+
+  double px2dp(int px){
+    double dp = 0.0;
+    double pixel = WidgetsBinding.instance.window.devicePixelRatio;
+    dp = px/pixel;
+    return Platform.isIOS?px.toDouble():dp;
+  }
+
+
+  static Future<ui.Image> getImageInfo(String url) async {
+    ImageStream stream =  NetworkImage(url).resolve(ImageConfiguration.empty);
+    Completer<ui.Image> completer =  Completer<ui.Image>();
+    ImageStreamListener listener;
+    listener = new ImageStreamListener(
+            (ImageInfo frame, bool synchronousCall) {
+          final ui.Image image = frame.image;
+          completer.complete(image);
+          stream.removeListener(listener);
+        });
+    stream.addListener(listener);
+    return completer.future;
   }
 
   @override
@@ -54,8 +87,8 @@ class _FlutterImageTextureWidgetState extends State<FlutterImageTextureWidget>{
       );
     }
     return Container(
-      width: widget.width,
-      height: widget.height,
+      width: width,
+      height: height,
       child:Texture(textureId: textureId),
     );
   }
