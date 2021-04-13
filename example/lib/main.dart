@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-
+import 'dart:ui' as ui;
 import 'package:flutter/services.dart';
 import 'package:flutterimagetexture/flutter_image_texture_widget.dart';
 
@@ -28,9 +28,14 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
-        body: Center(
-          child: FlutterImageTextureWidget(url: "https://t7.baidu.com/it/u=1951548898,3927145&fm=193&f=GIF",width: 300,height: 300,),
-        ),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              FlutterImageTextureWidget(url: "https://img.alicdn.com/imgextra/i4/217101303/O1CN01rV12Qg1LUok76BR8F_!!217101303.jpg"),
+              FlutterImageTextureWidget(url: "https://img.alicdn.com/imgextra/i4/217101303/O1CN01rV12Qg1LUok76BR8F_!!217101303.jpg")
+            ],
+          ),
+        )
       ),
     );
   }
